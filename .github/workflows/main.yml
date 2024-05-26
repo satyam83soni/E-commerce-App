@@ -39,45 +39,45 @@
 #           aws s3 sync build/ s3://$S3_BUCKET_NAME --delete
 
 
-# name: CI/CD
+name: CI/CD
 
-# on:
-#   push:
-#     branches:
-#       - main
+on:
+  push:
+    branches:
+      - main
 
-# defaults:
-#   run:
-#     working-directory: ./frontend
+defaults:
+  run:
+    working-directory: ./frontend
 
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v2
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-#       - name: Set up Node.js
-#         uses: actions/setup-node@v2
-#         with:
-#           node-version: '16'
-#           cache: 'npm'
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          cache: 'npm'
 
-#       - name: Install dependencies
-#         run: npm install
+      - name: Install dependencies
+        run: npm install
 
-#       - name: Build
-#         run: npm run build
+      - name: Build
+        run: npm run build
 
-#       - name: Deploy to S3
-#         env:
-#           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#           AWS_REGION: ap-south-1
-#           S3_BUCKET_NAME: ecommerce-123
-#         run: |
-#           aws s3 sync build/ s3://$S3_BUCKET_NAME --delete
+      - name: Deploy to S3
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ap-south-1
+          S3_BUCKET_NAME: ecommerce-123
+        run: |
+          aws s3 sync build/ s3://$S3_BUCKET_NAME --delete
 
 
 # name: CI/CD
@@ -120,45 +120,3 @@
 #         run: |
 #           cd frontend
 #           aws s3 sync build/ s3://$S3_BUCKET_NAME --delete
-
-
-name: Deploy Frontend to S3
-
-on:
-  push:
-    branches:
-      - main  # Set the branch you want to trigger the deployment from
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'  # Use the Node.js version your project requires
-
-      - name: Install dependencies
-        run: |
-          cd frontend
-          npm install --force
-
-      - name: Build frontend
-        run: |
-          cd frontend
-          npm run build
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1  # Set your AWS region
-
-      - name: Sync S3 bucket
-        run: |
-          aws s3 sync frontend/build s3://your-s3-bucket-name --delete
