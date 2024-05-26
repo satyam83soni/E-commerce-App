@@ -122,7 +122,7 @@
 #           aws s3 sync build/ s3://$S3_BUCKET_NAME --delete
 
 
-name: CI/CD
+name: Deploy Frontend to S3
 
 on:
   push:
@@ -140,7 +140,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '16'  # Use the Node.js version your project requires
+          node-version: '14'  # Use the Node.js version your project requires
 
       - name: Install dependencies
         run: |
@@ -152,12 +152,13 @@ jobs:
           cd frontend
           npm run build
 
-       - name: Deploy to S3
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ap-south-1
-          S3_BUCKET_NAME: ecommerce-123
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1  # Set your AWS region
+
+      - name: Sync S3 bucket
         run: |
-          cd frontend
-          aws s3 sync build/ s3://$S3_BUCKET_NAME --delete
+          aws s3 sync frontend/build s3://your-s3-bucket-name --delete
