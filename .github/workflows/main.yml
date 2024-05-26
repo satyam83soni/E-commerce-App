@@ -48,7 +48,7 @@ on:
 
 defaults:
   run:
-    working-directory: ./frontend   
+    working-directory: ./frontend/src
 
 jobs:
   build:
